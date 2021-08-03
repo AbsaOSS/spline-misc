@@ -20,7 +20,12 @@ const request = require('request')
 module.exports = {
     get: function (url) {
         return new Promise((resolve, reject) => {
+            const time0 = Date.now()
             request.get(url, {json: true}, (err, res, body) => {
+                const resStatus = (res||{}).status | 500
+                const resTime = Date.now() - time0
+                console.debug(`GET ${url} ${resStatus} ${resTime} ms`)
+
                 if (err) reject(err)
                 resolve(body)
             })

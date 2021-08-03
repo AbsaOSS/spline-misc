@@ -40,6 +40,7 @@ module.exports = {
             .catch(error => {
                 res.status(500)
                 res.send(error.message)
+                console.error(error.message)
             })
     }
 }

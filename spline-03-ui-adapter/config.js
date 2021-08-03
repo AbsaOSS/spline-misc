@@ -19,8 +19,7 @@ module.exports = {
     port: getOptional('SPLINE_PORT', 3000),
     shutdownDelay: getOptional('SPLINE_SHUTDOWN_DELAY', 5000),
     consumerAPIBase: getRequired('SPLINE_CONSUMER_URL'),
-    UIBase: getRequired('SPLINE_UI_URL'),
-    CAcertPath: getOptional('SPLINE_CACERT')
+    UIBase: getRequired('SPLINE_UI_URL')
 }
 
 function getRequired(propName) {

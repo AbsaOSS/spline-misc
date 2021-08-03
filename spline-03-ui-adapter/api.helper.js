@@ -15,29 +15,34 @@
  *
  */
 
-const fs = require('fs')
-const request = require('request')
-
-const config = require('./config')
-
-const ca = fs.readFileSync(config.CAcertPath)
+const https = require('https')
 
 module.exports = {
     get: function (url) {
         return new Promise((resolve, reject) => {
             const time0 = Date.now()
-            const options = {
-                json: true,
-                agentOptions: {ca}
-            }
-            request.get(url, options, (err, res, body) => {
-                const resStatus = (res || {}).status | 500
-                const resTime = Date.now() - time0
-                console.debug(`GET ${url} ${resStatus} ${resTime} ms`)
 
-                if (err) reject(err)
-                resolve(body)
+            https.get(url, (resp) => {
+                let data = ''
+
+                resp.on('data', (chunk) => {
+                    data += chunk
+                })
+
+                resp.on('end', () => {
+                    logCall(resp.statusCode)
+                    resolve(JSON.parse(data))
+                })
+
+            }).on("error", (err) => {
+                logCall(500)
+                reject(err)
             })
+
+            function logCall(status) {
+                const elapsed = Date.now() - time0
+                console.debug(`GET ${url} ${status} ${elapsed} ms`)
+            }
         })
     }
 }

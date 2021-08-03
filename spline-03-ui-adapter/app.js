@@ -18,45 +18,14 @@
 const express = require('express')
 const http = require('http')
 const {createTerminus} = require('@godaddy/terminus')
-const apiHelper = require('./api.helper')
-const configHelper = require('./config.helper')
+
+const config = require('./config')
+const controllers = require('./controllers')
 
 const app = express()
-
-const config = {
-    port: configHelper.getProp('SPLINE_PORT', 3000),
-    shutdownDelay: configHelper.getProp('SPLINE_SHUTDOWN_DELAY', 5000),
-    consumerAPIBase: configHelper.getProp('SPLINE_CONSUMER_URL'),
-    UIBase: configHelper.getProp('SPLINE_UI_URL')
-}
-
-function handleLineageSearchGET(req, res) {
-    const path = req.query['path']
-    const appId = req.query['application_id']
-
-    const eventSearchUrl = `${config.consumerAPIBase}/execution-events?dataSourceUri=${path}&applicationId=${appId}`
-
-    apiHelper.get(eventSearchUrl)
-        .then(response => {
-            const foundEvents = response['items'] || []
-            if (foundEvents.length > 0) {
-                const eventId = foundEvents[0]['executionEventId']
-                const eventUIUrl = `${config.UIBase}/app/events/overview/${eventId}/graph`
-                res.redirect(eventUIUrl)
-            } else {
-                res.status(404)
-                res.send(`Execution event not found`)
-            }
-        })
-        .catch(error => {
-            res.status(500)
-            res.send(error.message)
-        })
-}
-
-app.get('/dataset/lineage/_search', handleLineageSearchGET)
-
 const server = http.createServer(app)
+
+app.get('/dataset/lineage/_search', controllers.handleLineageSearchGET)
 
 createTerminus(server, {
     healthChecks: {'/healthcheck': () => Promise.resolve()},

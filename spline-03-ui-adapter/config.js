@@ -16,9 +16,14 @@
  */
 
 module.exports = {
-    getProp: function (propName, defaultValue) {
-        const value = process.env[propName] || defaultValue
-        if (!value) throw new Error(`Environment variable ${propName} is not specified`)
-        return value
-    }
+    port: getProp('SPLINE_PORT', 3000),
+    shutdownDelay: getProp('SPLINE_SHUTDOWN_DELAY', 5000),
+    consumerAPIBase: getProp('SPLINE_CONSUMER_URL'),
+    UIBase: getProp('SPLINE_UI_URL')
+}
+
+function getProp(propName, defaultValue) {
+    const value = process.env[propName] || defaultValue
+    if (!value) throw new Error(`Environment variable ${propName} is not specified`)
+    return value
 }

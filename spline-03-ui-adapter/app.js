@@ -18,12 +18,15 @@
 const express = require('express')
 const http = require('http')
 const {createTerminus} = require('@godaddy/terminus')
+const morgan = require('morgan')
 
 const config = require('./config')
 const controllers = require('./controllers')
 
 const app = express()
 const server = http.createServer(app)
+
+app.use(morgan('combined'))
 
 app.get('/dataset/lineage/_search', controllers.handleLineageSearchGET)
 

@@ -16,14 +16,19 @@
  */
 
 module.exports = {
-    port: getProp('SPLINE_PORT', 3000),
-    shutdownDelay: getProp('SPLINE_SHUTDOWN_DELAY', 5000),
-    consumerAPIBase: getProp('SPLINE_CONSUMER_URL'),
-    UIBase: getProp('SPLINE_UI_URL')
+    port: getOptional('SPLINE_PORT', 3000),
+    shutdownDelay: getOptional('SPLINE_SHUTDOWN_DELAY', 5000),
+    consumerAPIBase: getRequired('SPLINE_CONSUMER_URL'),
+    UIBase: getRequired('SPLINE_UI_URL'),
+    CAcertPath: getOptional('SPLINE_CACERT')
 }
 
-function getProp(propName, defaultValue) {
-    const value = process.env[propName] || defaultValue
+function getRequired(propName) {
+    const value = getOptional(propName)
     if (!value) throw new Error(`Environment variable ${propName} is not specified`)
     return value
+}
+
+function getOptional(propName, defaultValue) {
+    return process.env[propName] || defaultValue
 }

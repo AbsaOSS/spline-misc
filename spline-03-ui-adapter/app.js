@@ -40,4 +40,5 @@ createTerminus(server, {
 
 server.listen(config.port)
 
+console.log("Config", config)
 console.log("Server started")

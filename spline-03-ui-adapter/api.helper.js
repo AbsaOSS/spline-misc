@@ -15,14 +15,23 @@
  *
  */
 
+const fs = require('fs')
 const request = require('request')
+
+const config = require('./config')
+
+const ca = fs.readFileSync(config.CAcertPath)
 
 module.exports = {
     get: function (url) {
         return new Promise((resolve, reject) => {
             const time0 = Date.now()
-            request.get(url, {json: true}, (err, res, body) => {
-                const resStatus = (res||{}).status | 500
+            const options = {
+                json: true,
+                agentOptions: {ca}
+            }
+            request.get(url, options, (err, res, body) => {
+                const resStatus = (res || {}).status | 500
                 const resTime = Date.now() - time0
                 console.debug(`GET ${url} ${resStatus} ${resTime} ms`)
 
